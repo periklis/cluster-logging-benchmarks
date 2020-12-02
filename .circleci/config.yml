@@ -1,0 +1,32 @@
+version: 2
+jobs:
+  lint:
+    machine:
+      image: ubuntu-1604:202007-01
+      working_directory: ~/loki-benchmarks
+    steps:
+      - checkout
+      - run:
+          name: lint
+          command: make lint
+  build:
+    machine:
+      image: ubuntu-1604:202007-01
+    working_directory: ~/loki-benchmarks
+    steps:
+      - run:
+          name: install dependencies
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y gnuplot
+      - checkout
+      - run:
+          name: benchmarks
+          command: |
+            echo "Checkout observatorium/deployments"
+            cd ../ && git clone https://github.com/observatorium/deployments.git
+            cd loki-benchmarks && make bench-dev
+      - store_test_results:
+          path: reports
+      - store_artifacts:
+          path: reports

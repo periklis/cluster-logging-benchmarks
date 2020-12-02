@@ -1,0 +1,70 @@
+logger:
+  name: logger
+  namespace: default
+  image: quay.io/periklis/logger:latest
+  tenantId: observatorium
+
+querier:
+  name: querier
+  namespace: default
+  image: docker.io/curlimages/curl:7.72.0
+  tenantId: observatorium
+
+metrics:
+  url: http://127.0.0.1:9090
+  # Align these with ./prometheus/config.yaml
+  jobs:
+    elasticsearch: origin-logging-elasticsearch
+
+clusterLogging:
+  elasticearch: http://localhost:9200
+
+scenarios:
+  highVolumeReads:
+    enabled: false
+    samples:
+      interval: "30s"
+      range: "300s"
+      total: 10
+    writers:
+      replicas: 10
+      throughput: 100
+    readers:
+      replicas: 2
+      queries: {}
+      startThreshold: 1024000
+  highVolumeWrites:
+    enabled: true
+    samples:
+      interval: "30s"
+      range: "300s"
+      total: 10
+    writers:
+      replicas: 10
+      throughput: 100
+  highVolumeAggregate:
+    enabled: false
+    samples:
+      interval: "30s"
+      range: "300s"
+      total: 10
+    writers:
+      replicas: 10
+      throughput: 100
+    readers:
+      replicas: 2
+      queries: {}
+      startThreshold: 1024000
+  logsBasedDashboard:
+    enabled: false
+    samples:
+      interval: "30s"
+      range: "300s"
+      total: 10
+    writers:
+      replicas: 10
+      throughput: 100
+    readers:
+      replicas: 1
+      queries: {}
+      startThreshold: 1024000
