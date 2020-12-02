@@ -1,0 +1,58 @@
+cluster:
+  name: elasticsearch
+
+bootstrap:
+  system_call_filter: true
+
+node:
+  name: elasticsearch
+  master: true
+  data: true
+  max_local_storage_nodes: 1
+
+action.auto_create_index: "-*-write,+*"
+
+# network:
+#   publish_host: 0.0.0.0
+
+discovery.zen:
+  ping.unicast.hosts: 1
+  minimum_master_nodes: 1
+
+gateway:
+  recover_after_nodes: 1
+  expected_nodes: 1
+
+path:
+  data: /elasticsearch/persistent/elasticsearch/data
+  logs: /elasticsearch/persistent/elasticsearch/logs
+
+prometheus:
+  indices: false
+
+# increase the max header size above 8kb default
+http.max_header_size: 128kb
+
+opendistro_security:
+  authcz.admin_dn:
+  - CN=system.admin,OU=OpenShift,O=Logging
+  config_index_name: ".security"
+  ssl:
+    transport:
+      enabled: true
+      enforce_hostname_verification: false
+      keystore_type: JKS
+      keystore_filepath: /etc/elasticsearch/secret/searchguard.key
+      keystore_password: kspass
+      truststore_type: JKS
+      truststore_filepath: /etc/elasticsearch/secret/searchguard.truststore
+      truststore_password: tspass
+    http:
+      enabled: true
+      keystore_type: JKS
+      keystore_filepath: /etc/elasticsearch/secret/key
+      keystore_password: kspass
+      clientauth_mode: OPTIONAL
+      truststore_type: JKS
+      truststore_filepath: /etc/elasticsearch/secret/truststore
+      truststore_password: tspass
